@@ -33,3 +33,12 @@ jobs:
       - run: flutter pub get
 
       - run: flutter build ${{ matrix.target }}
+    
+    # upload artificates
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.target }}
+          path: |
+            build/app/outputs/flutter-apk/app-debug.apk
+            build/ios/iphoneos/Runner.app

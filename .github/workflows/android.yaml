@@ -26,7 +26,7 @@ jobs:
       - name: Clone Flutter repository with dev channel
         uses: subosito/flutter-action@v2
         with:
-          channel: dev
+          channel: beta
           cache: true
       - name: Checkout code
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c

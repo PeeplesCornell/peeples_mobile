@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "87911082253",
+    "project_id": "generative-382807",
+    "storage_bucket": "generative-382807.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87911082253:android:c5910785d94082f8a0a844",
+        "android_client_info": {
+          "package_name": "com.example.peeples"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87911082253-faafett3lv4rjcipsqkctqmh1psquf85.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkmt7R1Cn0WjgLMjfkba1hdjLv-vOyAYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87911082253-faafett3lv4rjcipsqkctqmh1psquf85.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -23,15 +23,12 @@ jobs:
           java-version: 11
           distribution: temurin
       # Set up Flutter.
-      - name: Clone Flutter repository with master channel
-        uses: subosito/flutter-action@dbf1fa04f4d2e52c33185153d06cdb5443aa189d
+      - name: Clone Flutter repository with dev channel
+        uses: subosito/flutter-action@v2
         with:
           channel: dev
-      - run: flutter config --enable-macos-desktop
-      - run: flutter doctor -v
-
-      # Checkout gallery code and get packages.
-      - name: Checkout gallery code
+          cache: true
+      - name: Checkout code
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       - run: flutter pub get
 

@@ -20,40 +20,28 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
   }
 
+  final sub_menu = {
+    'History': '/history',
+    'Friends': '/friends',
+    'Points': '/points',
+    'Settings': '/settings',
+  };
+
   @override
   Widget build(BuildContext context) {
-    print("Building HomePage");
     return Scaffold(
         drawer: Drawer(
             child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          children: [
-            ListTile(
-              title: const Text("History"),
-              onTap: () {
-                Navigator.pushNamed(context, '/history');
-              },
-            ),
-            ListTile(
-              title: const Text('Friends'),
-              onTap: () {
-                Navigator.pushNamed(context, '/friends');
-              },
-            ),
-            ListTile(
-              title: const Text('Points'),
-              onTap: () {
-                Navigator.pushNamed(context, '/points');
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-          ],
+          children: sub_menu.entries
+              .map((e) => ListTile(
+                    title: Text(e.key),
+                    onTap: () {
+                      Navigator.pushNamed(context, e.value);
+                    },
+                  ))
+              .toList(),
         )),
         appBar: null,
         body: FutureBuilder(

@@ -16,12 +16,12 @@ class _GoogleSignButtonState extends ConsumerState {
   @override
   void initState() {
     super.initState();
-    ref.read(authenticationProvider);
+    ref.read(firebaseProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    var auth = ref.watch(authenticationProvider);
+    var auth = ref.watch(firebaseProvider);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -45,12 +45,12 @@ class _GoogleSignButtonState extends ConsumerState {
                 if (ref.watch(isSignedInProvider)) {
                   print("signing out");
                   await ref
-                      .watch(authenticationProvider.notifier)
+                      .watch(firebaseProvider.notifier)
                       .signOutWithGoogle(context);
                 } else {
                   print("signing in");
                   await ref
-                      .watch(authenticationProvider.notifier)
+                      .watch(firebaseProvider.notifier)
                       .signInWithGoogle(context);
                 }
                 setState(() {

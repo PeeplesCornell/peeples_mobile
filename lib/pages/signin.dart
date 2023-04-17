@@ -11,7 +11,7 @@ class SignInScreen extends ConsumerWidget {
     return Scaffold(
       body: Center(
           child: FutureBuilder(
-        future: ref.read(authenticationProvider.notifier).setup(),
+        future: ref.read(firebaseProvider.notifier).setup(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');

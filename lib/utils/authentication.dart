@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +8,29 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:peeples/models/UserModel.dart';
 
-class AuthenticationState extends StateNotifier<UserModel?> {
-  AuthenticationState() : super(null);
+import '../models/Post.dart';
+
+class FirebaseState extends StateNotifier<UserModel?> {
+  DocumentSnapshot? lastDocumentSnapshot;
+  FirebaseState() : super(null);
+
+  Future<List<Post>> getPosts(int pageKey, int pageSize) async {
+    var query = FirebaseFirestore.instance
+        .collection('feeds')
+        .orderBy('visited_time', descending: true)
+        .limit(pageSize);
+
+    if (lastDocumentSnapshot != null) {
+      query = query.startAfterDocument(lastDocumentSnapshot!);
+    }
+
+    final snapshot = await query.get();
+
+    lastDocumentSnapshot = snapshot.docs.last;
+    final posts =
+        snapshot.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
+    return posts;
+  }
 
   Future<void> setup() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
@@ -59,15 +83,19 @@ class AuthenticationState extends StateNotifier<UserModel?> {
   }
 }
 
-final authenticationProvider =
-    StateNotifierProvider<AuthenticationState, UserModel?>((ref) {
-  return AuthenticationState();
+final firebaseProvider =
+    StateNotifierProvider<FirebaseState, UserModel?>((ref) {
+  return FirebaseState();
 });
 
 final isSignedInProvider = Provider<bool>((ref) {
-  var user = ref.watch(authenticationProvider);
+  var user = ref.watch(firebaseProvider);
   if (user == null) {
     return false;
   }
   return true;
+});
+
+final firestoreProvider = Provider<FirebaseFirestore>((ref) {
+  return FirebaseFirestore.instance;
 });

@@ -48,6 +48,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           future: ref.read(firebaseProvider.notifier).setup(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
+              print(snapshot.error);
               return const Text('Something went wrong');
             } else if (snapshot.connectionState == ConnectionState.done) {
               return Flex(

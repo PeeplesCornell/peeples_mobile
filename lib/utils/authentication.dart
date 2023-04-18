@@ -3,10 +3,12 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:peeples/models/UserModel.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/Post.dart';
 
@@ -32,8 +34,57 @@ class FirebaseState extends StateNotifier<UserModel?> {
     return posts;
   }
 
-  Future<void> setup() async {
+  Future<void> setup(BuildContext context) async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
+    // uuid based on device
+
+    FirebaseAuth.instance.authStateChanges().listen((user) async {
+      if (user != null) {
+        var fcmToken = await FirebaseMessaging.instance.getToken();
+        var uid = FirebaseAuth.instance.currentUser!.uid;
+        // access firebase firestore with given uid and update the fcm token if not exist create a doc
+        FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'fcm_token': fcmToken,
+        }, SetOptions(merge: true));
+      }
+    });
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+      print("token: $fcmToken");
+      if (FirebaseAuth.instance.currentUser == null) {
+        return;
+      }
+      var uid = FirebaseAuth.instance.currentUser!.uid;
+      print("uid: $uid");
+      FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'fcm_token': fcmToken,
+      });
+    }).onError((err) {
+      // Error getting token.
+      debugPrint("token error: $err");
+    });
+
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+      }
+    });
+
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       state = UserModel(
@@ -41,6 +92,7 @@ class FirebaseState extends StateNotifier<UserModel?> {
           email: user.email,
           photoURL: user.photoURL,
           uid: user.uid);
+      if (context.mounted) Navigator.of(context).pushReplacementNamed('/home');
     }
   }
 
@@ -58,6 +110,7 @@ class FirebaseState extends StateNotifier<UserModel?> {
 
       final UserCredential userCredential =
           await auth.signInWithCredential(credential);
+
       final User? user = userCredential.user;
       if (user == null) {
         return false;
@@ -67,7 +120,7 @@ class FirebaseState extends StateNotifier<UserModel?> {
           email: user.email,
           photoURL: user.photoURL,
           uid: user.uid);
-      Navigator.of(context).pushReplacementNamed('/home');
+      if (context.mounted) Navigator.of(context).pushReplacementNamed('/home');
       return true;
     }
     return false;
@@ -78,7 +131,7 @@ class FirebaseState extends StateNotifier<UserModel?> {
     await googleSignIn.signOut();
     await FirebaseAuth.instance.signOut();
     state = null;
-    Navigator.of(context).pushReplacementNamed('/');
+    if (context.mounted) Navigator.of(context).pushReplacementNamed('/');
     return true;
   }
 }

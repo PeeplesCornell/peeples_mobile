@@ -44,30 +44,14 @@ class _HomePageState extends ConsumerState<HomePage> {
               .toList(),
         )),
         appBar: null,
-        body: FutureBuilder(
-          future: ref.read(firebaseProvider.notifier).setup(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              print(snapshot.error);
-              return const Text('Something went wrong');
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return Flex(
-                direction: Axis.vertical,
-                children: [
-                  const Header(),
-                  Expanded(
-                    child: PostListViewState(),
-                  )
-                ],
-              );
-            } else {
-              return const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(
-                  Colors.deepPurple,
-                ),
-              );
-            }
-          },
+        body: Flex(
+          direction: Axis.vertical,
+          children: [
+            const Header(),
+            Expanded(
+              child: PostListViewState(),
+            )
+          ],
         ));
   }
 }

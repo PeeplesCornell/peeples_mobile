@@ -13,6 +13,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -24,8 +25,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'SFPro',
       ),
       routes: {
-        // '/': (context) => const SignInScreen(),
-        '/': (context) => const HomePage(),
+        '/': (context) => const SignInScreen(),
+        '/home': (context) => const HomePage(),
         '/history': (context) => const History(),
         '/friends': (context) => const Friends(),
         '/points': (context) => const Points(),

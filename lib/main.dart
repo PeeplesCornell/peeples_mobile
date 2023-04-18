@@ -5,6 +5,7 @@ import 'package:peeples/pages/friends.dart';
 import 'package:peeples/pages/history.dart';
 import 'package:peeples/pages/main_page.dart';
 import 'package:peeples/pages/points.dart';
+import 'package:peeples/pages/questionnaire.dart';
 import 'package:peeples/pages/settings.dart';
 import 'package:peeples/pages/signin.dart';
 
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SignInScreen(),
         '/home': (context) => const HomePage(),
         '/history': (context) => const History(),
-        '/friends': (context) => const Friends(),
+        // '/friends': (context) => const Friends(),
+        '/friends': (context) => const Questionnaire(),
         '/points': (context) => const Points(),
         '/settings': (context) => const Settings(),
       },

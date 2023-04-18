@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,7 +18,10 @@ class FirebaseState extends StateNotifier<UserModel?> {
 
   void resetLastHistory() {
     lastHistorySnapshot = null;
-  }
+    Future<List<String>> getQuestionnaire() async {
+      return Future.delayed(
+          const Duration(seconds: 2), () => ["fake data", "fake2", "fake3"]);
+    }
 
   Future<List<Post>> getPosts(int pageKey, int pageSize) async {
     var query = FirebaseFirestore.instance

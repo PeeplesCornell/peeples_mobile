@@ -14,6 +14,11 @@ class FirebaseState extends StateNotifier<UserModel?> {
   DocumentSnapshot? lastDocumentSnapshot;
   FirebaseState() : super(null);
 
+  Future<List<String>> getQuestionnaire() async {
+    return Future.delayed(
+        const Duration(seconds: 2), () => ["fake data", "fake2", "fake3"]);
+  }
+
   Future<List<Post>> getPosts(int pageKey, int pageSize) async {
     var query = FirebaseFirestore.instance
         .collection('feeds')

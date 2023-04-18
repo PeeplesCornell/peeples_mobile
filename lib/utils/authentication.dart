@@ -34,7 +34,6 @@ class FirebaseState extends StateNotifier<UserModel?> {
     }
 
     final snapshot = await query.get();
-
     lastDocumentSnapshot = snapshot.docs.last;
     final posts =
         snapshot.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
@@ -64,6 +63,11 @@ class FirebaseState extends StateNotifier<UserModel?> {
   }
 
   Future<void> setup(BuildContext context) async {
+  void resetPage() {
+    lastDocumentSnapshot = null;
+  }
+
+  Future<void> setup() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     // uuid based on device
 

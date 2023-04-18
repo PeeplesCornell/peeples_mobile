@@ -10,6 +10,31 @@ import '../utils/authentication.dart';
 import '../widgets/header.dart';
 import '../widgets/notification_pop.dart';
 
+class AutomaticDispose extends StatefulWidget {
+  final VoidCallback onDisposed;
+  final Widget child;
+
+  const AutomaticDispose(
+      {Key? key, required this.onDisposed, required this.child})
+      : super(key: key);
+
+  @override
+  _AutomaticDisposeState createState() => _AutomaticDisposeState();
+}
+
+class _AutomaticDisposeState extends State<AutomaticDispose> {
+  @override
+  void dispose() {
+    widget.onDisposed();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 

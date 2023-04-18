@@ -43,12 +43,10 @@ class _GoogleSignButtonState extends ConsumerState {
                   _isActioning = true;
                 });
                 if (ref.watch(isSignedInProvider)) {
-                  print("signing out");
                   await ref
                       .watch(firebaseProvider.notifier)
                       .signOutWithGoogle(context);
                 } else {
-                  print("signing in");
                   await ref
                       .watch(firebaseProvider.notifier)
                       .signInWithGoogle(context);

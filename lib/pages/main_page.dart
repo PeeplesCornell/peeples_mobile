@@ -45,36 +45,14 @@ class _HomePageState extends ConsumerState<HomePage> {
               .toList(),
         )),
         appBar: null,
-        body: FutureBuilder(
-          future: ref.read(firebaseProvider.notifier).setup(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              print(snapshot.error);
-              return const Text('Something went wrong');
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    expandedHeight: 248,
-                    floating: true,
-                    pinned: true,
-                    automaticallyImplyLeading: false,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Header(),
-                      expandedTitleScale: 1.3,
-                    ),
-                  ),
-                  PostListViewState()
-                ],
-              );
-            } else {
-              return const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(
-                  Colors.deepPurple,
-                ),
-              );
-            }
-          },
+        body: Flex(
+          direction: Axis.vertical,
+          children: [
+            const Header(),
+            Expanded(
+              child: PostListViewState(),
+            )
+          ],
         ));
   }
 }

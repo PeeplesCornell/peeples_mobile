@@ -45,14 +45,18 @@ class _HomePageState extends ConsumerState<HomePage> {
               .toList(),
         )),
         appBar: null,
-        body: Flex(
-          direction: Axis.vertical,
-          children: [
-            const Header(),
-            Expanded(
-              child: PostListViewState(),
-            )
-          ],
-        ));
+        body: CustomScrollView(slivers: [
+          SliverAppBar(
+            expandedHeight: 248,
+            floating: true,
+            pinned: true,
+            automaticallyImplyLeading: false,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Header(),
+              expandedTitleScale: 1.3,
+            ),
+          ),
+          PostListViewState()
+        ]));
   }
 }

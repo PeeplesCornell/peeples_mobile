@@ -45,6 +45,7 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
   firebase_messaging: ^14.4.1
   uuid: ^3.0.7
+  survey_kit: ^0.1.1
 
 dev_dependencies:
   flutter_test:

@@ -30,11 +30,14 @@ class FirebaseState extends StateNotifier<UserModel?> {
     }
 
     final snapshot = await query.get();
-
     lastDocumentSnapshot = snapshot.docs.last;
     final posts =
         snapshot.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
     return posts;
+  }
+
+  void resetPage() {
+    lastDocumentSnapshot = null;
   }
 
   Future<void> setup() async {

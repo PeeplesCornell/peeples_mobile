@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:peeples/models/Post.dart';
@@ -38,7 +39,9 @@ class _PostListViewState extends ConsumerState<PostListViewState> {
         _pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
-      _pagingController.error = error;
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _pagingController.error = error;
+      });
     }
   }
 

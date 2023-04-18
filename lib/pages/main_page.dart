@@ -52,19 +52,24 @@ class _HomePageState extends ConsumerState<HomePage> {
               print(snapshot.error);
               return const Text('Something went wrong');
             } else if (snapshot.connectionState == ConnectionState.done) {
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    expandedHeight: 248,
-                    floating: true,
-                    pinned: true,
-                    automaticallyImplyLeading: false,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Header(),
-                      expandedTitleScale: 1.3,
-                    ),
-                  ),
-                  PostListViewState()
+              return Column(
+                children: [
+                  Expanded(
+                      child: CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        expandedHeight: 248,
+                        floating: true,
+                        pinned: true,
+                        automaticallyImplyLeading: false,
+                        flexibleSpace: FlexibleSpaceBar(
+                          title: Header(),
+                          expandedTitleScale: 1.3,
+                        ),
+                      ),
+                      PostListViewState(),
+                    ],
+                  ))
                 ],
               );
             } else {

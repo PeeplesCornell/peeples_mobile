@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:peeples/pages/friends.dart';
 import 'package:peeples/pages/history.dart';
@@ -16,6 +17,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
     return MaterialApp(
       title: 'Flutter Deamo',
       theme: ThemeData(

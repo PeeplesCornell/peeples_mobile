@@ -14,21 +14,21 @@ class Header extends StatelessWidget {
           height: 248,
         ),
         const Positioned(
-          top: 100,
+          top: 150,
           child: Text(
             'Explore Midtown South',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
         Positioned(
-            top: MediaQuery.of(context).padding.top,
-            left: MediaQuery.of(context).padding.left + 18,
+            top: MediaQuery.of(context).padding.top + 8,
+            left: MediaQuery.of(context).padding.left,
             child: IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white, size: 32),
+              icon: const Icon(Icons.menu, color: Colors.white, size: 18),
               onPressed: () => Scaffold.of(context).openDrawer(),
             )),
       ],

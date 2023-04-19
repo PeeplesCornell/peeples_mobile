@@ -7,7 +7,6 @@ import 'package:peeples/pages/points.dart';
 import 'package:peeples/pages/questionnaire.dart';
 import 'package:peeples/pages/settings.dart';
 import 'package:peeples/pages/signin.dart';
-import 'package:peeples/pages/test.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));

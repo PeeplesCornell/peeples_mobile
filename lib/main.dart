@@ -7,6 +7,7 @@ import 'package:peeples/pages/points.dart';
 import 'package:peeples/pages/questionnaire.dart';
 import 'package:peeples/pages/settings.dart';
 import 'package:peeples/pages/signin.dart';
+import 'package:peeples/pages/test.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -26,10 +27,11 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         // '/': (context) => const SignInScreen(),
-        '/': (context) => const HomePage(),
+        // '/': (context) => const HomePage(),
+        '/': (context) => const Questionnaire(),
         '/history': (context) => const History(),
-        // '/friends': (context) => const Friends(),
-        '/friends': (context) => const Questionnaire(),
+        '/friends': (context) => const Friends(),
+        // '/friends': (context) => const Questionnaire(),
         '/points': (context) => const Points(),
         '/settings': (context) => const Settings(),
       },

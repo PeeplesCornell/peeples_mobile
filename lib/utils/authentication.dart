@@ -14,9 +14,18 @@ class FirebaseState extends StateNotifier<UserModel?> {
   DocumentSnapshot? lastDocumentSnapshot;
   FirebaseState() : super(null);
 
-  Future<List<String>> getQuestionnaire() async {
+  Future<Map<String, dynamic>> getQuestionnaire() async {
     return Future.delayed(
-        const Duration(seconds: 2), () => ["fake data", "fake2", "fake3"]);
+        const Duration(seconds: 2),
+        () => {
+              "questions": [
+                {"question": "Question 1", "type": "text"},
+                {"question": "Question 2", "type": "text"},
+                {"question": "Question 3", "type": "text"}
+              ],
+              "score": 200,
+              "merchant": "some data"
+            });
   }
 
   Future<List<Post>> getPosts(int pageKey, int pageSize) async {

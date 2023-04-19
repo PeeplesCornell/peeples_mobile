@@ -23,7 +23,7 @@ class FirebaseState extends StateNotifier<UserModel?> {
                 {"question": "Question 2", "type": "text"},
                 {"question": "Question 3", "type": "text"}
               ],
-              "score": 200,
+              "points": 200,
               "merchant": "some data"
             });
   }

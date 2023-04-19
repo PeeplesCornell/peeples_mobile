@@ -30,7 +30,9 @@ class Questionnaire extends ConsumerWidget {
                 final QuestionnaireModel questionnaireModel =
                     QuestionnaireModel.fromFirestore(snapshot.data!);
                 return QuestionnaireView(
-                    questionModels: questionnaireModel.questions);
+                  questionModels: questionnaireModel.questions,
+                  points: questionnaireModel.points,
+                );
               } else {
                 return const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation(
@@ -48,7 +50,9 @@ class Questionnaire extends ConsumerWidget {
 
 class QuestionnaireView extends StatefulWidget {
   final List<QuestionModel> questionModels;
-  const QuestionnaireView({Key? key, required this.questionModels})
+  final int points;
+  const QuestionnaireView(
+      {Key? key, required this.questionModels, required this.points})
       : super(key: key);
 
   @override
@@ -92,8 +96,8 @@ class _QuestionnaireViewState extends State<QuestionnaireView> {
   @override
   Widget build(BuildContext context) {
     if (_didSubmit) {
-      return const QuestionnaireSubmitted(
-        earnedPoints: 300,
+      return QuestionnaireSubmitted(
+        earnedPoints: widget.points,
         totalPoints: 1200,
       );
     }

@@ -3,11 +3,11 @@ import 'package:peeples/models/questionnaire_models/QuestionModel.dart';
 
 class QuestionnaireModel {
   final List<QuestionModel> questions;
-  final int score;
+  final int points;
   final MerchantModel merchant;
 
   QuestionnaireModel(
-      {required this.questions, required this.score, required this.merchant});
+      {required this.questions, required this.points, required this.merchant});
 
   // from firestore
   factory QuestionnaireModel.fromFirestore(Map<String, dynamic> json) {
@@ -15,7 +15,7 @@ class QuestionnaireModel {
         questions: List<Map<String, dynamic>>.from(json['questions'])
             .map((e) => QuestionModel.fromFirestore(e))
             .toList(),
-        score: json['score'],
+        points: json['points'],
         merchant: MerchantModel());
   }
 }

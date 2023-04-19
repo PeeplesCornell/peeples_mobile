@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:peeples/widgets/google_sign_btn.dart';
 import 'package:peeples/widgets/post_card.dart';
@@ -69,34 +70,18 @@ class _HomePageState extends ConsumerState<HomePage> {
               .toList(),
         )),
         appBar: null,
-        body: FutureBuilder(
-          future: ref.read(firebaseProvider.notifier).setup(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong');
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return Flex(
-                direction: Axis.vertical,
-                children: [
-                  const Header(),
-                  Expanded(
-                    child: AutomaticDispose(
-                      onDisposed: () {
-                        ref.read(firebaseProvider.notifier).resetPage();
-                      },
-                      child: PostListViewState(),
-                    ),
-                  )
-                ],
-              );
-            } else {
-              return const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(
-                  Colors.deepPurple,
-                ),
-              );
-            }
-          },
-        ));
+        body: CustomScrollView(slivers: [
+          SliverAppBar(
+            expandedHeight: 248,
+            floating: true,
+            pinned: true,
+            automaticallyImplyLeading: false,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Header(),
+              expandedTitleScale: 1.3,
+            ),
+          ),
+          PostListViewState()
+        ]));
   }
 }

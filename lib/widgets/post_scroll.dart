@@ -46,7 +46,7 @@ class _PostListViewState extends ConsumerState<PostListViewState> {
   }
 
   @override
-  Widget build(BuildContext context) => PagedListView<int, Post>(
+  Widget build(BuildContext context) => PagedSliverList<int, Post>(
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<Post>(
           itemBuilder: (context, item, index) => PostCard(post: item),

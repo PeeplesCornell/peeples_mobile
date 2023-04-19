@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:peeples/pages/friends.dart';
 import 'package:peeples/pages/history.dart';
@@ -14,9 +15,12 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
     return MaterialApp(
       title: 'Flutter Deamo',
       theme: ThemeData(
@@ -25,9 +29,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'SFPro',
       ),
       routes: {
-        // '/': (context) => const SignInScreen(),
-        // '/': (context) => const HomePage(),
-        '/': (context) => const Questionnaire(),
+        '/': (context) => const SignInScreen(),
+        '/home': (context) => const HomePage(),
         '/history': (context) => const History(),
         '/friends': (context) => const Friends(),
         // '/friends': (context) => const Questionnaire(),

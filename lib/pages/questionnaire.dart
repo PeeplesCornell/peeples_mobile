@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:peeples/models/questionnaire_models/QuestionModel.dart';
+import 'package:peeples/models/questionnaire_models/QuestionnaireModel.dart';
 import '../utils/authentication.dart';
-import 'package:survey_kit/survey_kit.dart';
+import '../widgets/questionnaire_input_widgets/dynamic_input.dart';
+import '../widgets/questionnaire_submitted.dart';
 
 class Questionnaire extends ConsumerWidget {
   const Questionnaire({Key? key}) : super(key: key);
@@ -13,49 +16,30 @@ class Questionnaire extends ConsumerWidget {
         title: const Text('Questionnaire'),
       ),
       body: Center(
-        child: FutureBuilder(
-          future: ref.read(firebaseProvider.notifier).getQuestionnaire(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData &&
-                snapshot.data != null) {
-              final steps = [
-                QuestionStep(
-                  title: 'Sample title',
-                  text: 'Sample text',
-                  answerFormat: const TextAnswerFormat(
-                    maxLines: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: FutureBuilder(
+            future: ref.read(firebaseProvider.notifier).getQuestionnaire(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                debugPrint(snapshot.error.toString());
+                return const Text('Something went wrong');
+              } else if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData &&
+                  snapshot.data != null) {
+                final QuestionnaireModel questionnaireModel =
+                    QuestionnaireModel.fromFirestore(snapshot.data!);
+                return QuestionnaireView(
+                    questionModels: questionnaireModel.questions);
+              } else {
+                return const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(
+                    Colors.deepPurple,
                   ),
-                ),
-                QuestionStep(
-                  title: 'Sample title',
-                  text: 'Sample text',
-                  answerFormat: const TextAnswerFormat(
-                    maxLines: 5,
-                  ),
-                ),
-              ];
-              final surveyTask =
-                  NavigableTask(id: TaskIdentifier(), steps: steps);
-              return SurveyKit(
-                  onResult: (SurveyResult result) {
-                    print(result.finishReason);
-                    print(result.results.toString());
-                  },
-                  task: surveyTask);
-            } else if (snapshot.hasError) {
-              debugPrint(snapshot.error.toString());
-              return const Text('Something went wrong');
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              return QuestionnaireView(data: snapshot.data!);
-            } else {
-              return const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(
-                  Colors.deepPurple,
-                ),
-              );
-            }
-          },
+                );
+              }
+            },
+          ),
         ),
       ),
     );
@@ -63,58 +47,93 @@ class Questionnaire extends ConsumerWidget {
 }
 
 class QuestionnaireView extends StatefulWidget {
-  final List<String> data;
-  const QuestionnaireView({Key? key, required this.data}) : super(key: key);
+  final List<QuestionModel> questionModels;
+  const QuestionnaireView({Key? key, required this.questionModels})
+      : super(key: key);
 
   @override
   State<QuestionnaireView> createState() => _QuestionnaireViewState();
 }
 
 class _QuestionnaireViewState extends State<QuestionnaireView> {
-  final int _index = 0;
-  late final List<String?> _result =
-      List.generate(widget.data.length, (index) => null);
+  int _index = 0;
+  bool _didSubmit = false;
+  late List<String?> _responses =
+      List.generate(widget.questionModels.length, (index) => null);
+
+  void _nextPage() {
+    setState(() {
+      _index += 1;
+    });
+  }
+
+  void _previousPage() {
+    setState(() {
+      _index -= 1;
+    });
+  }
+
+  void _saveAnswer(String updatedResponse) {
+    setState(() {
+      _responses = [
+        ..._responses.sublist(0, _index),
+        updatedResponse,
+        ..._responses.sublist(_index + 1)
+      ];
+    });
+  }
+
+  void _onSubmit() {
+    setState(() {
+      _didSubmit = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: TextQuestion(question: widget.data[_index]),
-    );
-  }
-}
+    if (_didSubmit) {
+      return const QuestionnaireSubmitted(
+        earnedPoints: 300,
+        totalPoints: 1200,
+      );
+    }
 
-class TextQuestion extends StatefulWidget {
-  final String question;
-  const TextQuestion({Key? key, required this.question}) : super(key: key);
+    final bool isFirstQuestion = _index == 0;
+    final bool isLastQuestion = _index == widget.questionModels.length - 1;
+    final bool isNextStepEnabled =
+        _responses[_index] != null && _responses[_index] != "";
 
-  @override
-  _TextQuestionState createState() => _TextQuestionState();
-}
+    final Widget previousButtonOrContainer = isFirstQuestion
+        ? Container()
+        : TextButton(onPressed: _previousPage, child: const Text("Previous"));
+    final Widget nextOrSubmitButton = isLastQuestion
+        ? TextButton(
+            onPressed: isNextStepEnabled ? _onSubmit : null,
+            child: const Text("Submit"))
+        : TextButton(
+            onPressed: isNextStepEnabled ? _nextPage : null,
+            child: const Text("Next"));
 
-class _TextQuestionState extends State<TextQuestion> {
-  late final _textController = TextEditingController();
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(6),
-        child: Column(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(),
+        Column(
           children: [
-            Text(widget.question),
-            TextField(
-              controller: _textController,
+            Text(widget.questionModels[_index].question),
+            DynamicInput(
+              key: Key(_index.toString()),
+              type: widget.questionModels[_index].type,
+              response: _responses[_index],
+              updateResponseCallback: _saveAnswer,
             ),
           ],
         ),
-      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [previousButtonOrContainer, nextOrSubmitButton],
+        )
+      ],
     );
   }
 }

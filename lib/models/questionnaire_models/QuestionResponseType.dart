@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 enum QuestionResponseType {
   text,
+  multiselect,
   audio,
   photo,
   video,
@@ -11,6 +12,8 @@ enum QuestionResponseType {
     switch (type) {
       case "text":
         return QuestionResponseType.text;
+      case "multiselect":
+        return QuestionResponseType.multiselect;
       case "scale":
         return QuestionResponseType.scale;
       case "audio":

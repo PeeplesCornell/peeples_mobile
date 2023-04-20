@@ -79,11 +79,7 @@ class _QuestionnaireViewState extends State<QuestionnaireView> {
 
   void _saveAnswer(String updatedResponse) {
     setState(() {
-      _responses = [
-        ..._responses.sublist(0, _index),
-        updatedResponse,
-        ..._responses.sublist(_index + 1)
-      ];
+      _responses[_index] = updatedResponse;
     });
   }
 
@@ -124,7 +120,14 @@ class _QuestionnaireViewState extends State<QuestionnaireView> {
         Container(),
         Column(
           children: [
-            Text(widget.questionModels[_index].question),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 0),
+              child: Text(
+                widget.questionModels[_index].question,
+                style:
+                    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
+            ),
             DynamicInput(
               key: Key(_index.toString()),
               type: widget.questionModels[_index].type,

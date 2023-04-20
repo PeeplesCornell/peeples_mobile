@@ -20,19 +20,20 @@ class FirebaseState extends StateNotifier<UserModel?> {
     lastHistorySnapshot = null;
   }
 
-    Future<Map<String, dynamic>> getQuestionnaire() async {
-      return Future.delayed(
-          const Duration(seconds: 2),
-          () => {
-                "questions": [
-                  {"question": "Question 1", "type": "text"},
-                  {"question": "Question 2", "type": "text"},
-                  {"question": "Question 3", "type": "text"}
-                ],
-                "score": 200,
-                "merchant": "some data"
-              });
-    }
+  Future<Map<String, dynamic>> getQuestionnaire() async {
+    return Future.delayed(
+        const Duration(seconds: 1),
+        () => {
+              "questions": [
+                {"question": "What did you order?", "type": "multiselect"},
+                {"question": "Question 1", "type": "text"},
+                {"question": "Question 2", "type": "text"},
+                {"question": "Question 3", "type": "text"}
+              ],
+              "points": 200,
+              "merchant": "some data"
+            });
+  }
 
   Future<List<Post>> getPosts(int pageKey, int pageSize) async {
     var query = FirebaseFirestore.instance

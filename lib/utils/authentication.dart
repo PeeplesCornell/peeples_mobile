@@ -18,9 +18,10 @@ class FirebaseState extends StateNotifier<UserModel?> {
 
   Future<Map<String, dynamic>> getQuestionnaire() async {
     return Future.delayed(
-        const Duration(seconds: 2),
+        const Duration(seconds: 1),
         () => {
               "questions": [
+                {"question": "What did you order?", "type": "multiselect"},
                 {"question": "Question 1", "type": "text"},
                 {"question": "Question 2", "type": "text"},
                 {"question": "Question 3", "type": "text"}

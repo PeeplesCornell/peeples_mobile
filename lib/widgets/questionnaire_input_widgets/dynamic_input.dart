@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peeples/widgets/questionnaire_input_widgets/searchable_multi_select.dart';
 import 'package:peeples/widgets/questionnaire_input_widgets/text_input.dart';
 
 import '../../models/questionnaire_models/QuestionResponseType.dart';
@@ -21,6 +22,48 @@ class DynamicInput extends StatelessWidget {
       case QuestionResponseType.text:
         return TextInput(
             updateResponseCallback: updateResponseCallback, response: response);
+      case QuestionResponseType.multiselect:
+        return SearchableMultiSelect(
+          updateResponseCallback: updateResponseCallback,
+          response: response,
+          options: const [
+            "hi",
+            "hello",
+            "another choice",
+            "s33",
+            "s8kk",
+            "hi",
+            "hello",
+            "another choice",
+            "s33",
+            "s8kk",
+            "hi",
+            "hello",
+            "another choice",
+            "s33",
+            "s8kk",
+            "hi",
+            "hello",
+            "another choice",
+            "s33",
+            "s8kk",
+            "hi",
+            "hello",
+            "another choice",
+            "s33",
+            "s8kk",
+            "hi",
+            "hello",
+            "another choice",
+            "s33",
+            "s8kk",
+            "hi",
+            "hello",
+            "another choice",
+            "s33",
+            "s8kk"
+          ],
+        );
       default:
         return Container();
     }

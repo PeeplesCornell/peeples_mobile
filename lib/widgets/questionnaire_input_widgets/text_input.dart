@@ -39,7 +39,6 @@ class _TextInputState extends State<TextInput> {
           TextSelection.collapsed(offset: _textController.text.length);
     }
     return TextField(
-      autofocus: true,
       controller: _textController,
     );
   }

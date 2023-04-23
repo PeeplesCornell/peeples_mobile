@@ -10,6 +10,7 @@ import 'package:peeples/pages/settings.dart';
 import 'package:peeples/pages/signin.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const ProviderScope(child: MyApp()));
 }
 

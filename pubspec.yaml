@@ -45,7 +45,7 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
   firebase_messaging: ^14.4.1
   uuid: ^3.0.7
-
+  camera: ^0.10.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

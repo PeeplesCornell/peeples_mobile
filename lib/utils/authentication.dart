@@ -11,10 +11,16 @@ import 'package:peeples/models/UserModel.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/Post.dart';
+import '../models/HistoryModel.dart';
 
 class FirebaseState extends StateNotifier<UserModel?> {
   DocumentSnapshot? lastDocumentSnapshot;
+  DocumentSnapshot? lastHistorySnapshot;
   FirebaseState() : super(null);
+
+  void resetLastHistory() {
+    lastHistorySnapshot = null;
+  }
 
   Future<List<Post>> getPosts(int pageKey, int pageSize) async {
     var query = FirebaseFirestore.instance
@@ -32,6 +38,28 @@ class FirebaseState extends StateNotifier<UserModel?> {
     final posts =
         snapshot.docs.map((doc) => Post.fromFirestore(doc.data())).toList();
     return posts;
+  }
+
+  Future<List<HistoryModel>> getHistorys(int pageKey, int pageSize) async {
+    // var uid = ref.watch(userIdProvider);
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    var query = FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('history')
+        .orderBy('time', descending: true)
+        .limit(pageSize);
+
+    if (lastHistorySnapshot != null) {
+      query = query.startAfterDocument(lastHistorySnapshot!);
+    }
+
+    final snapshot = await query.get();
+    lastHistorySnapshot = snapshot.docs.last;
+    final historys = snapshot.docs
+        .map((doc) => HistoryModel.fromFirestore(doc.data()))
+        .toList();
+    return historys;
   }
 
   Future<void> setup(BuildContext context) async {
@@ -151,4 +179,13 @@ final isSignedInProvider = Provider<bool>((ref) {
 
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
   return FirebaseFirestore.instance;
+});
+
+final userIdProvider = Provider<String>((ref) {
+  var user = ref.watch(firebaseProvider);
+  if (user == null) {
+    return '';
+  } else {
+    return user.uid!;
+  }
 });

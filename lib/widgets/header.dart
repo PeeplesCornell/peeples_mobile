@@ -24,13 +24,6 @@ class Header extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
-            top: MediaQuery.of(context).padding.top + 8,
-            left: MediaQuery.of(context).padding.left,
-            child: IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white, size: 18),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            )),
       ],
     );
   }

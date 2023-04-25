@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:peeples/widgets/google_sign_btn.dart';
 import 'package:peeples/widgets/post_card.dart';
@@ -7,6 +8,7 @@ import 'package:peeples/widgets/post_scroll.dart';
 
 import '../utils/authentication.dart';
 import '../widgets/header.dart';
+import '../widgets/notification_pop.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,9 +18,16 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  bool shouldShowPopUp = true;
   @override
   void initState() {
     super.initState();
+  }
+
+  void handleShowPopUp() {
+    setState(() {
+      shouldShowPopUp = !shouldShowPopUp;
+    });
   }
 
   final sub_menu = {
@@ -27,10 +36,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     'Points': '/points',
     'Settings': '/settings',
   };
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         drawer: Drawer(
             child: ListView(
           shrinkWrap: true,
@@ -50,12 +61,29 @@ class _HomePageState extends ConsumerState<HomePage> {
             expandedHeight: 248,
             floating: true,
             pinned: true,
+            snap: true,
+            leading: IconButton(
+              icon: Icon(Icons.menu, color: Colors.white),
+              onPressed: () {
+                _scaffoldKey.currentState!.openDrawer();
+              },
+            ),
             automaticallyImplyLeading: false,
             flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.all(0),
               title: Header(),
               expandedTitleScale: 1.3,
             ),
           ),
+          SliverToBoxAdapter(
+              child: Visibility(
+                  visible: shouldShowPopUp,
+                  child: Padding(
+                    child: NotificationPop(
+                      handleVisible: handleShowPopUp,
+                    ),
+                    padding: EdgeInsets.only(top: 16, left: 8, right: 8),
+                  ))),
           PostListViewState()
         ]));
   }

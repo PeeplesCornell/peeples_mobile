@@ -94,7 +94,7 @@ class _QuestionnaireViewState extends ConsumerState<QuestionnaireView> {
     if (_didSubmit) {
       return QuestionnaireSubmitted(
         earnedPoints: widget.questionnaireModel.points,
-        totalPoints: 1200, // TODO: Hard-coded
+        totalPoints: 1200, // TODO: HARD CODED
       );
     }
 

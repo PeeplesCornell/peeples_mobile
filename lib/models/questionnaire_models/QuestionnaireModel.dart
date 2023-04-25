@@ -5,13 +5,19 @@ class QuestionnaireModel {
   final List<QuestionModel> questions;
   final int points;
   final MerchantModel merchant;
+  final String id;
 
   QuestionnaireModel(
-      {required this.questions, required this.points, required this.merchant});
+      {required this.id,
+      required this.questions,
+      required this.points,
+      required this.merchant});
 
   // from firestore
-  factory QuestionnaireModel.fromFirestore(Map<String, dynamic> json) {
+  factory QuestionnaireModel.fromFirestore(
+      String id, Map<String, dynamic> json) {
     return QuestionnaireModel(
+        id: id,
         questions: List<Map<String, dynamic>>.from(json['questions'])
             .map((e) => QuestionModel.fromFirestore(e))
             .toList(),

@@ -10,13 +10,18 @@ class QuestionnaireSubmitted extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Text("Thank you!"),
-      const Text("You have earned: "),
-      Text("$earnedPoints",
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.green)),
-      Text("Total points: ${earnedPoints + totalPoints}")
-    ]);
+    return Center(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text("Thank you!"),
+            const Text("You have earned: "),
+            Text("$earnedPoints",
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.green)),
+            Text("Total points: ${earnedPoints + totalPoints}")
+          ]),
+    );
   }
 }

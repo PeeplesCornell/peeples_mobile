@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -6,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:peeples/models/UserModel.dart';
+import 'package:peeples/models/questionnaire_models/QuestionResponseType.dart';
+import 'package:peeples/models/questionnaire_models/QuestionnaireModel.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/Post.dart';
@@ -20,19 +25,46 @@ class FirebaseState extends StateNotifier<UserModel?> {
     lastHistorySnapshot = null;
   }
 
-  Future<Map<String, dynamic>> getQuestionnaire() async {
-    return Future.delayed(
-        const Duration(seconds: 1),
-        () => {
-              "questions": [
-                {"question": "What did you order?", "type": "multiselect"},
-                {"question": "Question 1", "type": "text"},
-                {"question": "Question 2", "type": "text"},
-                {"question": "Question 3", "type": "text"}
-              ],
-              "points": 200,
-              "merchant": "some data"
-            });
+  Future submitQuestionnaire(
+      QuestionnaireModel questionnaireModel, List<String> response) async {
+    final processedResponse =
+        Iterable<int>.generate(response.length).toList().map((index) {
+      switch (questionnaireModel.questions[index].type) {
+        // Upload file to FireStorage and return file path
+        case QuestionResponseType.video:
+        case QuestionResponseType.audio:
+          {
+            final path = "userID:${response[index]}";
+            final fileRef = FirebaseStorage.instance.ref().child(path);
+            fileRef.putFile(File(response[index])).catchError(
+                (error, stackTrace) => debugPrint(error.toString()));
+
+            return path;
+          }
+        default:
+          return response[index];
+      }
+    });
+
+    await FirebaseFirestore.instance
+        .collection("questionnaires")
+        .doc(questionnaireModel.id)
+        .collection("responses")
+        .add({
+      "userID": "userID",
+      "merchantID": questionnaireModel.merchant.toString(),
+      "timestamp": Timestamp.now(),
+      "response": processedResponse,
+    });
+  }
+
+  Future<QuestionnaireModel> getQuestionnaire() async {
+    final docRef = FirebaseFirestore.instance
+        .collection("questionnaires")
+        .doc("3bVs3iRP8m8USWz1UNJh"); // Hard-coded for now
+    final doc = await docRef.get();
+    final data = doc.data() as Map<String, dynamic>;
+    return QuestionnaireModel.fromFirestore(doc.id, data);
   }
 
   Future<List<Post>> getPosts(int pageKey, int pageSize) async {
@@ -74,7 +106,6 @@ class FirebaseState extends StateNotifier<UserModel?> {
     return historys;
   }
 
-  Future<void> setup(BuildContext context) async {
   void resetPage() {
     lastDocumentSnapshot = null;
   }

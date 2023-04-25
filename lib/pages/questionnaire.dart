@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:peeples/models/questionnaire_models/QuestionModel.dart';
 import 'package:peeples/models/questionnaire_models/QuestionnaireModel.dart';
+import 'package:peeples/widgets/questionnaire_header.dart';
 import '../utils/authentication.dart';
-import '../widgets/questionnaire_input_widgets/dynamic_input.dart';
+import '../widgets/questionnaire_input/dynamic_input.dart';
 import '../widgets/questionnaire_submitted.dart';
 
 class Questionnaire extends ConsumerWidget {
@@ -12,78 +12,78 @@ class Questionnaire extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Questionnaire'),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: FutureBuilder(
-            future: ref.read(firebaseProvider.notifier).getQuestionnaire(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                debugPrint(snapshot.error.toString());
-                return const Text('Something went wrong');
-              } else if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData &&
-                  snapshot.data != null) {
-                final QuestionnaireModel questionnaireModel =
-                    QuestionnaireModel.fromFirestore(snapshot.data!);
-                return QuestionnaireView(
-                  questionModels: questionnaireModel.questions,
-                  points: questionnaireModel.points,
-                );
-              } else {
-                return const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(
-                    Colors.deepPurple,
+      body: FutureBuilder(
+        future: ref.read(firebaseProvider.notifier).getQuestionnaire(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData &&
+              snapshot.data != null) {
+            final QuestionnaireModel questionnaireModel = snapshot.data!;
+            return Column(
+              children: [
+                AppBar(
+                  iconTheme: const IconThemeData(
+                    color: Colors.white,
                   ),
-                );
-              }
-            },
-          ),
-        ),
+                  flexibleSpace: const QuestionnaireHeader(),
+                ),
+                QuestionnaireView(questionnaireModel: questionnaireModel),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            debugPrint(snapshot.error.toString());
+            return const Text('Something went wrong');
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(
+                  Colors.deepPurple,
+                ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
 }
 
-class QuestionnaireView extends StatefulWidget {
-  final List<QuestionModel> questionModels;
-  final int points;
-  const QuestionnaireView(
-      {Key? key, required this.questionModels, required this.points})
+class QuestionnaireView extends ConsumerStatefulWidget {
+  final QuestionnaireModel questionnaireModel;
+  const QuestionnaireView({Key? key, required this.questionnaireModel})
       : super(key: key);
 
   @override
-  State<QuestionnaireView> createState() => _QuestionnaireViewState();
+  ConsumerState<QuestionnaireView> createState() => _QuestionnaireViewState();
 }
 
-class _QuestionnaireViewState extends State<QuestionnaireView> {
-  int _index = 0;
+class _QuestionnaireViewState extends ConsumerState<QuestionnaireView> {
+  int _questionIndex = 0;
   bool _didSubmit = false;
-  late List<String?> _responses =
-      List.generate(widget.questionModels.length, (index) => null);
+  late final List<String?> _responses =
+      List.generate(widget.questionnaireModel.questions.length, (_) => null);
 
   void _nextPage() {
     setState(() {
-      _index += 1;
+      _questionIndex += 1;
     });
   }
 
   void _previousPage() {
     setState(() {
-      _index -= 1;
+      _questionIndex -= 1;
     });
   }
 
-  void _saveAnswer(String updatedResponse) {
+  void _saveResponse(String? updatedResponse) {
     setState(() {
-      _responses[_index] = updatedResponse;
+      _responses[_questionIndex] = updatedResponse;
     });
   }
 
   void _onSubmit() {
+    ref.read(firebaseProvider.notifier).submitQuestionnaire(
+        widget.questionnaireModel, _responses.map((e) => e!).toList());
     setState(() {
       _didSubmit = true;
     });
@@ -93,15 +93,16 @@ class _QuestionnaireViewState extends State<QuestionnaireView> {
   Widget build(BuildContext context) {
     if (_didSubmit) {
       return QuestionnaireSubmitted(
-        earnedPoints: widget.points,
-        totalPoints: 1200,
+        earnedPoints: widget.questionnaireModel.points,
+        totalPoints: 1200, // TODO: Hard-coded
       );
     }
 
-    final bool isFirstQuestion = _index == 0;
-    final bool isLastQuestion = _index == widget.questionModels.length - 1;
+    final bool isFirstQuestion = _questionIndex == 0;
+    final bool isLastQuestion =
+        _questionIndex == widget.questionnaireModel.questions.length - 1;
     final bool isNextStepEnabled =
-        _responses[_index] != null && _responses[_index] != "";
+        _responses[_questionIndex] != null && _responses[_questionIndex] != "";
 
     final Widget previousButtonOrContainer = isFirstQuestion
         ? Container()
@@ -114,33 +115,42 @@ class _QuestionnaireViewState extends State<QuestionnaireView> {
             onPressed: isNextStepEnabled ? _nextPage : null,
             child: const Text("Next"));
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(),
-        Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 0),
-              child: Text(
-                widget.questionModels[_index].question,
-                style:
-                    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Question text
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                child: Text(
+                  widget.questionnaireModel.questions[_questionIndex].question,
+                  style: const TextStyle(fontSize: 17),
+                ),
               ),
-            ),
-            DynamicInput(
-              key: Key(_index.toString()),
-              type: widget.questionModels[_index].type,
-              response: _responses[_index],
-              updateResponseCallback: _saveAnswer,
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [previousButtonOrContainer, nextOrSubmitButton],
-        )
-      ],
+
+              // Input widget
+              DynamicQuestionInput(
+                // TODO: LAYOUT - this widget should take the remaining space
+                key: Key(_questionIndex.toString()),
+                type: widget.questionnaireModel.questions[_questionIndex].type,
+                response: _responses[_questionIndex],
+                updateResponseCallback: _saveResponse,
+                multiselectOptions:
+                    widget.questionnaireModel.questions[_questionIndex].options,
+              ),
+            ],
+          ),
+
+          // Previous & Next buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [previousButtonOrContainer, nextOrSubmitButton],
+          )
+        ],
+      ),
     );
   }
 }

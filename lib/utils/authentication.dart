@@ -110,7 +110,7 @@ class FirebaseState extends StateNotifier<UserModel?> {
     lastDocumentSnapshot = null;
   }
 
-  Future<void> setup() async {
+  Future<void> setup(BuildContext context) async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     // uuid based on device
 

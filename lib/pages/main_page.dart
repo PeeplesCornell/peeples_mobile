@@ -109,7 +109,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     padding: EdgeInsets.only(top: 16, left: 8, right: 8),
                   ))),
-          PostListViewState()
+          AutomaticDispose(
+              child: PostListViewState(),
+              onDisposed: () =>
+                  ref.read(firebaseProvider.notifier).resetPage()),
         ]));
   }
 }

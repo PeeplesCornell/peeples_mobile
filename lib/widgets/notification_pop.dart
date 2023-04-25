@@ -53,14 +53,13 @@ class NotificationPop extends StatelessWidget {
         Row(children: [
           Image.asset(
             "assets/home/map.png",
-            height: 152,
-            width: 249,
+            width: MediaQuery.of(context).size.width * 0.6,
+            fit: BoxFit.cover,
           ),
           Image.network(
             "https://images.unsplash.com/photo-1515182629504-727d7753751f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1036&q=80",
             fit: BoxFit.cover,
-            width: 152,
-            height: 146,
+            width: MediaQuery.of(context).size.width * 0.3,
           ),
         ]),
         Row(children: [

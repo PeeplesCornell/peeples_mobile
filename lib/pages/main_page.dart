@@ -36,10 +36,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     'Points': '/points',
     'Settings': '/settings',
   };
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         drawer: Drawer(
             child: ListView(
           shrinkWrap: true,
@@ -59,8 +61,16 @@ class _HomePageState extends ConsumerState<HomePage> {
             expandedHeight: 248,
             floating: true,
             pinned: true,
+            snap: true,
+            leading: IconButton(
+              icon: Icon(Icons.menu, color: Colors.white),
+              onPressed: () {
+                _scaffoldKey.currentState!.openDrawer();
+              },
+            ),
             automaticallyImplyLeading: false,
             flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.all(0),
               title: Header(),
               expandedTitleScale: 1.3,
             ),

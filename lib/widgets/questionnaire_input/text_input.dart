@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TextInput extends StatefulWidget {
   final String? response;
-  final void Function(String) updateResponseCallback;
+  final void Function(String?) updateResponseCallback;
   const TextInput(
       {Key? key, this.response, required this.updateResponseCallback})
       : super(key: key);

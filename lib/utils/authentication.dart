@@ -48,8 +48,8 @@ class FirebaseState extends StateNotifier<UserModel?> {
         .doc(questionnaireModel.id)
         .collection("responses")
         .add({
-      "userID": "userID", // TODO
-      "merchantID": questionnaireModel.merchant.toString(), // TODO
+      "userID": "userID", // TODO: HARD CODED
+      "merchantID": questionnaireModel.merchant.toString(), // TODO: HARD CODED
       "timestamp": Timestamp.now(),
       "response": processedResponse,
     });
@@ -58,7 +58,7 @@ class FirebaseState extends StateNotifier<UserModel?> {
   Future<QuestionnaireModel> getQuestionnaire() async {
     final docRef = FirebaseFirestore.instance
         .collection("questionnaires")
-        .doc("3bVs3iRP8m8USWz1UNJh"); // Hard-coded for now
+        .doc("3bVs3iRP8m8USWz1UNJh"); // TODO: HARD CODED
     final doc = await docRef.get();
     final data = doc.data() as Map<String, dynamic>;
     return QuestionnaireModel.fromFirestore(doc.id, data);

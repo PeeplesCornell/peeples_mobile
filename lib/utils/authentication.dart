@@ -15,9 +15,11 @@ import 'package:peeples/models/questionnaire_models/QuestionnaireModel.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/Post.dart';
+import '../models/HistoryModel.dart';
 
 class FirebaseState extends StateNotifier<UserModel?> {
   DocumentSnapshot? lastDocumentSnapshot;
+  DocumentSnapshot? lastHistorySnapshot;
   FirebaseState() : super(null);
 
   Future submitQuestionnaire(
@@ -46,8 +48,8 @@ class FirebaseState extends StateNotifier<UserModel?> {
         .doc(questionnaireModel.id)
         .collection("responses")
         .add({
-      "userID": "userID",
-      "merchantID": questionnaireModel.merchant.toString(),
+      "userID": "userID", // TODO
+      "merchantID": questionnaireModel.merchant.toString(), // TODO
       "timestamp": Timestamp.now(),
       "response": processedResponse,
     });
@@ -60,6 +62,10 @@ class FirebaseState extends StateNotifier<UserModel?> {
     final doc = await docRef.get();
     final data = doc.data() as Map<String, dynamic>;
     return QuestionnaireModel.fromFirestore(doc.id, data);
+  }
+
+  void resetLastHistory() {
+    lastHistorySnapshot = null;
   }
 
   Future<List<Post>> getPosts(int pageKey, int pageSize) async {
@@ -79,8 +85,26 @@ class FirebaseState extends StateNotifier<UserModel?> {
     return posts;
   }
 
-  void resetPage() {
-    lastDocumentSnapshot = null;
+  Future<List<HistoryModel>> getHistorys(int pageKey, int pageSize) async {
+    // var uid = ref.watch(userIdProvider);
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    var query = FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('history')
+        .orderBy('time', descending: true)
+        .limit(pageSize);
+
+    if (lastHistorySnapshot != null) {
+      query = query.startAfterDocument(lastHistorySnapshot!);
+    }
+
+    final snapshot = await query.get();
+    lastHistorySnapshot = snapshot.docs.last;
+    final historys = snapshot.docs
+        .map((doc) => HistoryModel.fromFirestore(doc.data()))
+        .toList();
+    return historys;
   }
 
   Future<void> setup(BuildContext context) async {
@@ -200,4 +224,13 @@ final isSignedInProvider = Provider<bool>((ref) {
 
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
   return FirebaseFirestore.instance;
+});
+
+final userIdProvider = Provider<String>((ref) {
+  var user = ref.watch(firebaseProvider);
+  if (user == null) {
+    return '';
+  } else {
+    return user.uid!;
+  }
 });

@@ -61,7 +61,9 @@ class _MultiSelectInputState extends State<MultiSelectInput> {
         )
         .toList();
     Text selected = Text(_selectedOptions.join(", "),
-        style: const TextStyle(color: Colors.grey, fontSize: 14));
+        style: const TextStyle(color: Colors.grey, fontSize: 14),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -72,18 +74,20 @@ class _MultiSelectInputState extends State<MultiSelectInput> {
             border: OutlineInputBorder(),
           ),
         ),
-        const SizedBox(height: 10),
+        const Padding(padding: EdgeInsets.only(top: 10)),
         selected,
-        const SizedBox(height: 10),
-        SizedBox(
-          // TODO: LAYOUT - Expanded widget throws error
-          height: 380,
-          child: SingleChildScrollView(
+        const Padding(padding: EdgeInsets.only(top: 10)),
+        LayoutBuilder(builder: (context, constrain) {
+          return Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Wrap(
-                  spacing: 10,
-                  direction: Axis.horizontal,
-                  children: filteredOptions)),
-        )
+                spacing: 10,
+                children: filteredOptions,
+              ),
+            ),
+          );
+        })
       ],
     );
   }

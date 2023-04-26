@@ -81,9 +81,14 @@ class _MultiSelectInputState extends State<MultiSelectInput> {
           return Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: Wrap(
-                spacing: 10,
-                children: filteredOptions,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: constrain.maxHeight,
+                ),
+                child: Wrap(
+                  spacing: 10,
+                  children: filteredOptions,
+                ),
               ),
             ),
           );

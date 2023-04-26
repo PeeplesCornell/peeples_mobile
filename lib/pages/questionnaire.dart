@@ -19,16 +19,21 @@ class Questionnaire extends ConsumerWidget {
               snapshot.hasData &&
               snapshot.data != null) {
             final QuestionnaireModel questionnaireModel = snapshot.data!;
-            return Column(
-              children: [
-                AppBar(
-                  iconTheme: const IconThemeData(
-                    color: Colors.white,
+            return SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  AppBar(
+                    iconTheme: const IconThemeData(
+                      color: Colors.white,
+                    ),
+                    flexibleSpace: const QuestionnaireHeader(),
                   ),
-                  flexibleSpace: const QuestionnaireHeader(),
-                ),
-                QuestionnaireView(questionnaireModel: questionnaireModel),
-              ],
+                  Expanded(
+                      child: QuestionnaireView(
+                          questionnaireModel: questionnaireModel)),
+                ],
+              ),
             );
           } else if (snapshot.hasError) {
             debugPrint(snapshot.error.toString());
@@ -118,6 +123,7 @@ class _QuestionnaireViewState extends ConsumerState<QuestionnaireView> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

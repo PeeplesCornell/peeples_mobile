@@ -35,31 +35,6 @@ class _AutomaticDisposeState extends State<AutomaticDispose> {
   }
 }
 
-class AutomaticDispose extends StatefulWidget {
-  final VoidCallback onDisposed;
-  final Widget child;
-
-  const AutomaticDispose(
-      {Key? key, required this.onDisposed, required this.child})
-      : super(key: key);
-
-  @override
-  _AutomaticDisposeState createState() => _AutomaticDisposeState();
-}
-
-class _AutomaticDisposeState extends State<AutomaticDispose> {
-  @override
-  void dispose() {
-    widget.onDisposed();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
-}
-
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -126,14 +101,19 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
           SliverToBoxAdapter(
-              child: Visibility(
-                  visible: shouldShowPopUp,
-                  child: Padding(
-                    child: NotificationPop(
-                      handleVisible: handleShowPopUp,
-                    ),
-                    padding: EdgeInsets.only(top: 16, left: 8, right: 8),
-                  ))),
+              child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/questionnaire');
+            },
+            child: Visibility(
+                visible: shouldShowPopUp,
+                child: Padding(
+                  child: NotificationPop(
+                    handleVisible: handleShowPopUp,
+                  ),
+                  padding: EdgeInsets.only(top: 16, left: 8, right: 8),
+                )),
+          )),
           AutomaticDispose(
               child: PostListViewState(),
               onDisposed: () =>

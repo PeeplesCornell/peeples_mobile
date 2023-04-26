@@ -45,8 +45,6 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
   firebase_messaging: ^14.4.1
   uuid: ^3.0.7
-  survey_kit: ^0.1.1
-
   camera: ^0.10.4
   path_provider: ^2.0.14
   video_player: ^2.6.1

@@ -21,6 +21,48 @@ class FirebaseState extends StateNotifier<UserModel?> {
   DocumentSnapshot? lastHistorySnapshot;
   FirebaseState() : super(null);
 
+  Future submitQuestionnaire(
+      QuestionnaireModel questionnaireModel, List<String> response) async {
+    final processedResponse =
+        Iterable<int>.generate(response.length).toList().map((index) {
+      switch (questionnaireModel.questions[index].type) {
+        // Upload file to FireStorage and return file path
+        case QuestionResponseType.video:
+        case QuestionResponseType.audio:
+          {
+            final path = "userID:${response[index]}";
+            final fileRef = FirebaseStorage.instance.ref().child(path);
+            fileRef.putFile(File(response[index])).catchError(
+                (error, stackTrace) => debugPrint(error.toString()));
+
+            return path;
+          }
+        default:
+          return response[index];
+      }
+    });
+
+    await FirebaseFirestore.instance
+        .collection("questionnaires")
+        .doc(questionnaireModel.id)
+        .collection("responses")
+        .add({
+      "userID": "userID", // TODO: HARD CODED
+      "merchantID": questionnaireModel.merchant.toString(), // TODO: HARD CODED
+      "timestamp": Timestamp.now(),
+      "response": processedResponse,
+    });
+  }
+
+  Future<QuestionnaireModel> getQuestionnaire() async {
+    final docRef = FirebaseFirestore.instance
+        .collection("questionnaires")
+        .doc("3bVs3iRP8m8USWz1UNJh"); // TODO: HARD CODED
+    final doc = await docRef.get();
+    final data = doc.data() as Map<String, dynamic>;
+    return QuestionnaireModel.fromFirestore(doc.id, data);
+  }
+
   void resetLastHistory() {
     lastHistorySnapshot = null;
   }

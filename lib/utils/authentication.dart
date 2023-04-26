@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -105,6 +104,10 @@ class FirebaseState extends StateNotifier<UserModel?> {
         .map((doc) => HistoryModel.fromFirestore(doc.data()))
         .toList();
     return historys;
+  }
+
+  void resetPage() {
+    lastDocumentSnapshot = null;
   }
 
   Future<void> setup(BuildContext context) async {

@@ -101,15 +101,23 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
           SliverToBoxAdapter(
-              child: Visibility(
-                  visible: shouldShowPopUp,
-                  child: Padding(
-                    child: NotificationPop(
-                      handleVisible: handleShowPopUp,
-                    ),
-                    padding: EdgeInsets.only(top: 16, left: 8, right: 8),
-                  ))),
-          PostListViewState()
+              child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/questionnaire');
+            },
+            child: Visibility(
+                visible: shouldShowPopUp,
+                child: Padding(
+                  child: NotificationPop(
+                    handleVisible: handleShowPopUp,
+                  ),
+                  padding: EdgeInsets.only(top: 16, left: 8, right: 8),
+                )),
+          )),
+          AutomaticDispose(
+              child: PostListViewState(),
+              onDisposed: () =>
+                  ref.read(firebaseProvider.notifier).resetPage()),
         ]));
   }
 }

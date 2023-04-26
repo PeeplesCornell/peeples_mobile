@@ -38,7 +38,9 @@ class _HistoryListViewState extends ConsumerState<HistoryListViewState> {
         _pagingController.appendPage(newItems, nextPageKey);
       }
     } catch (error) {
-      _pagingController.error = error;
+      // no item in the list
+      _pagingController.appendPage([], 0);
+      print(error);
     }
   }
 

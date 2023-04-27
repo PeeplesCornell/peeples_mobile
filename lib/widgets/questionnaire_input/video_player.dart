@@ -5,8 +5,10 @@ import 'package:video_player/video_player.dart';
 
 class VideoPage extends StatefulWidget {
   final String filePath;
+  final bool isThumbnail;
 
-  const VideoPage({Key? key, required this.filePath}) : super(key: key);
+  const VideoPage({Key? key, required this.filePath, required this.isThumbnail})
+      : super(key: key);
 
   @override
   _VideoPageState createState() => _VideoPageState();
@@ -14,7 +16,6 @@ class VideoPage extends StatefulWidget {
 
 class _VideoPageState extends State<VideoPage> {
   late VideoPlayerController _videoPlayerController;
-  bool _initialized = false;
 
   @override
   void dispose() {
@@ -24,30 +25,37 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   void initState() {
-    _initVideoPlayer();
-    super.initState();
-  }
-
-  Future _initVideoPlayer() async {
     _videoPlayerController = VideoPlayerController.file(File(widget.filePath));
-    await _videoPlayerController.initialize();
-    await _videoPlayerController.setLooping(true);
-    await _videoPlayerController.play().then((_) => print("playing"));
-    setState(() {
-      _initialized = true;
+
+    _videoPlayerController.addListener(() {
+      setState(() {});
     });
-    // TODO: VIDEO - video should be playing but not
+    _videoPlayerController.initialize();
+    if (!widget.isThumbnail) {
+      _videoPlayerController.setLooping(true);
+      _videoPlayerController.play();
+    }
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_initialized) {
-      return _videoPlayerController.value.isInitialized
-          ? AspectRatio(
-              aspectRatio: _videoPlayerController.value.aspectRatio,
-              child: VideoPlayer(_videoPlayerController))
-          : Container();
+    if (_videoPlayerController.value.isInitialized) {
+      return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            iconTheme: const IconThemeData(
+              color: Colors.white,
+            )),
+        body: AspectRatio(
+            aspectRatio: _videoPlayerController.value.aspectRatio,
+            child: VideoPlayer(_videoPlayerController)),
+      );
+    } else {
+      return const Center(child: CircularProgressIndicator());
     }
-    return const Center(child: CircularProgressIndicator());
   }
 }

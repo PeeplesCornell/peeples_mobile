@@ -60,39 +60,37 @@ class _MultiSelectInputState extends State<MultiSelectInput> {
           ),
         )
         .toList();
+
     Text selected = Text(_selectedOptions.join(", "),
         style: const TextStyle(color: Colors.grey, fontSize: 14),
         maxLines: 2,
         overflow: TextOverflow.ellipsis);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextField(
-          controller: searchController,
-          decoration: const InputDecoration(
-            isDense: true,
-            border: OutlineInputBorder(),
+
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: searchController,
+            decoration: const InputDecoration(
+              isDense: true,
+              border: OutlineInputBorder(),
+            ),
           ),
-        ),
-        const Padding(padding: EdgeInsets.only(top: 10)),
-        selected,
-        const Padding(padding: EdgeInsets.only(top: 10)),
-        LayoutBuilder(builder: (context, constrain) {
-          return Expanded(
+          const Padding(padding: EdgeInsets.only(top: 10)),
+          selected,
+          const Padding(padding: EdgeInsets.only(top: 10)),
+          Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: ConstrainedBox(
-                constraints:
-                    BoxConstraints(maxHeight: constrain.maxHeight * 0.9),
-                child: Wrap(
-                  spacing: 10,
-                  children: filteredOptions,
-                ),
+              child: Wrap(
+                spacing: 10,
+                children: filteredOptions,
               ),
             ),
-          );
-        })
-      ],
+          )
+        ],
+      ),
     );
   }
 }

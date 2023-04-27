@@ -27,7 +27,7 @@ class QuestionnaireHeader extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 24,
                     backgroundImage: NetworkImage(
-                        "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*r_3WfxcZiSTE9EYjLwMzYg.jpeg"),
+                        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F427138345907760272%2F&psig=AOvVaw0gvVRscZ_egUrRsLn2v_hX&ust=1682647977284000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPia1an-yP4CFQAAAAAdAAAAABAs"),
                   )),
               const Positioned(
                   bottom: -65,

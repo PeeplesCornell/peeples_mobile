@@ -123,31 +123,34 @@ class _QuestionnaireViewState extends ConsumerState<QuestionnaireView> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Question text
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                child: Text(
-                  widget.questionnaireModel.questions[_questionIndex].question,
-                  style: const TextStyle(fontSize: 17),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Question text
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                  child: Text(
+                    widget
+                        .questionnaireModel.questions[_questionIndex].question,
+                    style: const TextStyle(fontSize: 17),
+                  ),
                 ),
-              ),
 
-              // Input widget
-              DynamicQuestionInput(
-                // TODO: LAYOUT - this widget should take the remaining space
-                key: Key(_questionIndex.toString()),
-                type: widget.questionnaireModel.questions[_questionIndex].type,
-                response: _responses[_questionIndex],
-                updateResponseCallback: _saveResponse,
-                multiselectOptions:
-                    widget.questionnaireModel.questions[_questionIndex].options,
-              ),
-            ],
+                // Input widget
+                DynamicQuestionInput(
+                  key: Key(_questionIndex.toString()),
+                  type:
+                      widget.questionnaireModel.questions[_questionIndex].type,
+                  response: _responses[_questionIndex],
+                  updateResponseCallback: _saveResponse,
+                  multiselectOptions: widget
+                      .questionnaireModel.questions[_questionIndex].options,
+                ),
+              ],
+            ),
           ),
 
           // Previous & Next buttons
